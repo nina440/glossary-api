@@ -1,0 +1,23 @@
+{
+    "name": "glossary-api",
+    "version": "1.0.0",
+    "description": "API для работы с глоссарием терминов.",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "nodemon src/server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "mongoose": "^8.9.5",
+        "react-flow-renderer": "^10.3.17",
+        "vis-network": "^9.1.9"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
+}

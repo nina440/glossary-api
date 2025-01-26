@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glossary API</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-network@9.1.0/styles/vis-network.min.css">
+</head>
+<body>
+  <header>
+    <h1>Glossary</h1>
+  </header>
+  <main>
+    <div class="tabs">
+      <button id="terms-tab" class="tab-button active">Термины</button>
+      <button id="mindmap-tab" class="tab-button">Граф</button>
+    </div>
+    
+    <div id="terms-container">
+      <h2>Термины</h2>
+      <div id="terms-list" class="cards-container"></div>
+    </div>
+
+    <div id="mindmap-container" class="hidden">
+      <h2>Семантический граф</h2>
+      <div id="mindmap" style="height: 400px;"></div>
+    </div>
+
+    <div id="add-term">
+      <h2>Добавить новый термин</h2>
+      <form id="term-form" class="form">
+        <div class="form-group">
+          <label for="term-name">Название термина:</label>
+          <input type="text" id="term-name" placeholder="Название термина" required>
+        </div>
+        <div class="form-group">
+          <label for="term-definition">Определение:</label>
+          <textarea id="term-definition" placeholder="Определение" required></textarea>
+        </div>
+        <button type="submit" class="form-button">Добавить</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Проверяем, существует ли уже объявленная переменная
+    if (!window.isTabsInitialized) {
+      // Устанавливаем флаг, чтобы избежать повторной инициализации
+      window.isTabsInitialized = true;
+  
+      // Переключение вкладок
+      const termsTab = document.getElementById('terms-tab');
+      const mindmapTab = document.getElementById('mindmap-tab');
+      const termsContainer = document.getElementById('terms-container');
+      const mindmapContainer = document.getElementById('mindmap-container');
+  
+      termsTab.addEventListener('click', () => {
+        termsTab.classList.add('active');
+        mindmapTab.classList.remove('active');
+        termsContainer.classList.remove('hidden');
+        mindmapContainer.classList.add('hidden');
+      });
+  
+      mindmapTab.addEventListener('click', () => {
+        mindmapTab.classList.add('active');
+        termsTab.classList.remove('active');
+        termsContainer.classList.add('hidden');
+        mindmapContainer.classList.remove('hidden');
+        loadGraphData();
+      });
+  
+      // Загрузка данных графа с сервера
+      function loadGraphData() {
+        fetch('http://localhost:3000/graph')
+          .then(response => response.json())
+          .then(data => {
+            const nodes = new vis.DataSet(data.nodes);
+            const edges = new vis.DataSet(data.edges);
+            const container = document.getElementById('mindmap');
+            const dataForGraph = { nodes, edges };
+            const options = {
+              physics: { enabled: true },
+              nodes: {
+                shape: 'dot',
+                size: 10,
+                font: { size: 14 },
+              },
+              edges: {
+                width: 2,
+                color: { color: '#000000', highlight: '#ff0000' },
+              },
+            };
+            new vis.Network(container, dataForGraph, options);
+          })
+          .catch(error => console.error('Ошибка при загрузке графа:', error));
+      }
+    }
+  </script>
+  
+</body>
+</html>
